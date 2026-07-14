@@ -35,7 +35,7 @@ An end-to-end platform that scrapes jobs from multiple sources using Apify, matc
 
 ## Getting Started
 
-See [Environment Setup](./docs/ENVIRONMENT_SETUP.md) for instructions.
+See [LOCAL_SETUP.md](./LOCAL_SETUP.md) for detailed setup instructions.
 
 ## Architecture
 
