@@ -1,37 +1,38 @@
 # Progress Tracker
 
-Update this file after every meaningful implementation
-change.
+Update this file after every meaningful implementation change.
 
 ## Current Phase
 
-- [e.g. Not started / In progress / Complete]
+- In progress
 
 ## Current Goal
 
-- [What you are building right now]
+- Set up backend API skeleton
 
 ## Completed
 
-- None yet.
+- Backend setup: created FastAPI project skeleton with app/ structure, main.py, health endpoint, core config and logging, requirements.txt, Dockerfile, and basic routers.
 
 ## In Progress
 
-- None yet.
+- None
 
 ## Next Up
 
-- [First unit to build]
+- Define API routes for users, resumes, jobs, matching, AI generation, notifications.
 
 ## Open Questions
 
-- [Any unresolved product or technical decisions]
+- None
 
 ## Architecture Decisions
 
-- [Decisions made that affect the system design or
-  data model — include why the decision was made]
+- Using FastAPI with Pydantic v2 for validation.
+- Using SQLAlchemy with asyncpg for Postgres+pgvector.
+- Using Redis for caching and Celery broker.
+- Environment configuration via pydantic BaseSettings.
 
 ## Session Notes
 
-- [Context needed to resume work in the next session]
+- Backend skeleton ready for further feature development.
