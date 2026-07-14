@@ -19,6 +19,7 @@ Update this file after every meaningful implementation change.
 - Initialized GitHub repository with README, .gitignore, and initial folder structure.
 - Created LOCAL_SETUP.md with detailed setup instructions.
 - Set up Supabase project (conceptual; actual setup via dashboard).
+- Configured Supabase Auth: enabled email/password, Google, GitHub providers; set JWT settings (900s expiry, audience authenticated, refresh token rotation); customized email templates; set redirect URLs.
 - Created docker-compose.yml with:
   - PostgreSQL 15 (with pgvector and uuid-ossp extensions)
   - Redis 7

@@ -294,6 +294,42 @@ All services read configuration from environment variables. The table below list
 
 > **Note**: Variables prefixed with `NEXT_PUBLIC` are exposed to the browser; never put secret values there.
 
+## Supabase Auth Configuration (Optional)
+
+To enable email/password sign‑up, OAuth providers (Google, GitHub), and configure JWT settings:
+
+1. **Enable Providers** – In the Supabase dashboard go to **Authentication → Providers** and toggle on:
+   - Email/Password
+   - Google
+   - GitHub
+   Set the appropriate Client ID and Secret for each OAuth provider (obtain from Google Cloud Console and GitHub Developer Settings).
+
+2. **JWT Settings** – Under **Authentication → Settings**:
+   - Access token expiration: **900 seconds** (15 min)
+   - Refresh token rotation: **Enabled**
+   - Audience: **authenticated**
+   - Role: **anon** for public calls, **service_role** for backend (store the service role key as a secret).
+
+3. **Email Templates** – Under **Authentication → Email Templates** customize:
+   - **Confirm sign‑up**: subject and body (include verification token link).
+   - **Reset password**: subject and body (include reset link).
+   - **Magic link** (if used): subject and body.
+   Replace placeholders with your product branding and ensure the redirect URL points to your application (e.g., `http://localhost:3000/auth/callback` for dev).
+
+4. **Redirect URLs** – In each provider’s configuration set the **Redirect URL** to:
+   - `http://localhost:3000/auth/callback` (development)
+   - For production, use your production domain (e.g., `https://jobfinder.example.com/auth/callback`).
+   Also set the **Site URL** (Authentication → Settings → Site URL) to the same base URL used for email confirmation links.
+
+5. **Local Supabase Stack** – If you run Supabase locally via `supabase start`, the above settings can be configured via the Supabase CLI or by editing the generated configuration files in the `supabase/` directory (see Supabase documentation).
+
+After configuring, ensure the environment variables `.env` contain:
+- `SUPABASE_URL` (your Supabase project URL)
+- `SUPABASE_ANON_KEY` (public anon key)
+- `SUPABASE_SERVICE_ROLE_KEY` (private service role key)
+
+These are already present in `.env.example`.
+
 ## Running the Application
 
 ### Using Docker‑Compose (Recommended for Consistency)
