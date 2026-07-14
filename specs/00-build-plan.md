@@ -33,25 +33,25 @@ This document outlines the implementation phases for the AI-Powered Job Finder S
 **Objective**: Implement user registration, login, profile management, and role-based access.
 
 **Deliverables**:
-- Supabase Auth integrated with email/password and OAuth (Google, GitHub).
-- Email verification flow (token sent, link clicks to verify).
-- Password reset via email token.
-- User profile page (view and edit: name, headline, location, bio, links).
-- Role attribute in user metadata (user/admin) and middleware to protect routes.
-- Basic API endpoints for profile CRUD.
+- Supabase Auth configuration (specs/002A-supabase-auth.md)
+- Backend authentication module (specs/002B-backend-auth.md)
+- Frontend authentication layer (specs/002C-frontend-auth.md)
+- Profile bootstrap (public.profiles table and triggers) (specs/002D-profile-bootstrap.md)
+- Authentication testing strategy (specs/002E-auth-testing.md)
 
 **Dependencies**: Phase 0 (Supabase project ready).
 
-**Estimated Effort**: 25-35 hours.
+**Estimated Effort**: 20-30 hours (each sub‑spec ≈ 2‑6 hours).
 
 **Verification Checklist**:
-- [ ] User can sign up with email/password and receive verification email.
-- [ ] Email verification link activates account and redirects to onboarding.
-- [ ] User can log in with email/password and OAuth providers.
-- [ ] Password reset flow works end-to-end.
-- [ ] Authenticated user can view and edit profile; changes persist.
-- [ ] Admin role can access admin-only routes (to be built in later phases).
+- [ ] Supabase Auth configured with email/password, Google, GitHub providers; JWT settings and email templates applied.
+- [ ] Backend exposes `/api/v1/auth/*` endpoints (register, login, logout, refresh, reset‑password, verify‑email, me) and validates JWT via middleware.
+- [ ] Frontend includes Supabase client, middleware that redirects unauthenticated users, login/logout pages, and a protected example page.
+- [ ] Database migration creates `public.profiles` table with trigger that creates a profile for each new auth user.
+- [ ] All auth‑related unit and integration tests pass with ≥80 % coverage.
 - [ ] API returns 401 for unauthenticated requests to protected endpoints.
+- [ ] Password reset and email verification flows work end‑to‑end.
+- [ ] OAuth (Google/GitHub) login creates or links a user and creates a profile row.
 
 ## Phase 2: Resume Handling
 
@@ -190,7 +190,7 @@ This document outlines the implementation phases for the AI-Powered Job Finder S
 - [ ] User can add a note when saving; note is displayed and editable.
 - [ ] Drag-and-drop moves job to another column (e.g., Saved → Applied) and updates timestamp.
 - [ ] Clicking "Apply" records timestamp and redirects to the job's application URL.
-- [ ] Custom stages can beadded via admin settings (if implemented in this phase or later) and appear in the board.
+- [ ] Custom stages can be added via admin settings (if implemented in this phase or later) and appear in the board.
 - [ ] Board filters work: show only "Applied" jobs, or jobs added in the last week.
 - [ ] Empty state for each column provides guidance.
 - [ ] Data persists across sessions and is tied to the authenticated user.
