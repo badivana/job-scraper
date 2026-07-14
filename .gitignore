@@ -1,0 +1,46 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.pyc
+*.pyo*
+*.pydc
+*.db
+*.sqlite3
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build outputs
+/dist
+/build/
+/.next/
+/out/
+/.expo/
+.webpack
+
+# Misc
+.DS_Store
+Thumbs.db
+.env.local
+.env.development
+.env.production
+.env.test
