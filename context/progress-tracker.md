@@ -5,33 +5,44 @@ change.
 
 ## Current Phase
 
-- [e.g. Not started / In progress / Complete]
+- In progress
 
 ## Current Goal
 
-- [What you are building right now]
+- Set up development environment, CI/CD pipeline, and foundational infrastructure
 
 ## Completed
 
-- None yet.
+- Added infrastructure files:
+  - docker-compose.yml with PostgreSQL (pgvector), Redis, backend, frontend, Mailhog services
+  - init-db.sh to enable pgvector and uuid-ossp extensions
+  - .env.example with required environment variables
+  - .github/workflows/ci-cd.yml for building, testing, and deploying Docker images
+  - docker-compose.test.yml for CI testing
+  - Updated .gitignore to exclude common build and dependency files
+  - Created necessary directory structure and placeholder modules (later removed to keep only infrastructure)
+- Initial frontend and backend skeletons were created and then removed to focus on infrastructure only.
 
 ## In Progress
 
-- None yet.
+- None
 
 ## Next Up
 
-- [First unit to build]
+- Implement user authentication and authentication routes
 
 ## Open Questions
 
-- [Any unresolved product or technical decisions]
+- None
 
 ## Architecture Decisions
 
-- [Decisions made that affect the system design or
-  data model — include why the decision was made]
+- Selected Docker Compose for local development orchestration
+- Chose GitHub Actions for CI/CD pipeline with builds to GHCR
+- Used Next.js 15 with TypeScript for frontend (removed scaffold to focus on infrastructure)
+- Used FastAPI with Python 3.12 for backend (removed scaffold to focus on infrastructure)
+- Used Supabase-managed services (PostgreSQL with pgvector, Auth, Storage) for production, mirrored locally via Docker
 
 ## Session Notes
 
-- [Context needed to resume work in the next session]
+- Infrastructure setup completed. Ready to begin feature development.

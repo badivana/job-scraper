@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  db:
+    extends:
+      file: docker-compose.yml
+      service: db
+    environment:
+      POSTGRES_DB: postgres_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+  redis:
+    extends:
+      file: docker-compose.yml
+      service: redis
+  backend:
+    extends:
+      file: docker-compose.yml
+      service: backend
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/postgres_test
+      REDIS_URL: redis://redis:6379/0
+      ENVIRONMENT: testing
+    # Override command to just keep the container alive for testing
+    command: ["tail", "-f", "/dev/null"]
+  frontend:
+    extends:
+      file: docker-compose.yml
+      service: frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    # Override command to just keep the container alive for testing
+    command: ["tail", "-f", "/dev/null"]
