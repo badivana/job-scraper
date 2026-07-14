@@ -1,0 +1,247 @@
+# Product Requirements Document
+
+## Purpose
+
+To define the functional and non-functional requirements, user stories, and acceptance criteria for the AI-Powered Job Finder platform.
+
+## Contents
+
+- Introduction
+- Glossary
+- User Personas
+- Functional Requirements
+- Non-Functional Requirements
+- User Stories & Acceptance Criteria
+- Out of Scope
+- Open Questions
+
+## Introduction
+
+The AI-Powered Job Finder is a SaaS platform that helps job seekers discover relevant job openings, match them to their resumes, track applications, and generate personalized application materials. It leverages AI for resume parsing, skill extraction, job matching, and content generation.
+
+## Glossary
+
+- **ATS**: Applicant Tracking System
+- **JWT**: JSON Web Token
+- **OAuth**: Open Authorization
+- **pgvector**: PostgreSQL extension for vector similarity search
+- **API**: Application Programming Interface
+- **UI/UX**: User Interface / User Experience
+- **NPS**: Net Promoter Score
+- **SLA**: Service Level Agreement
+- **CI/CD**: Continuous Integration / Continuous Deployment
+- **ETL**: Extract, Transform, Load
+
+## User Personas
+
+### 1. Alex – Recent Graduate
+- **Goals**: Find entry‑level roles matching degree and internships; get feedback on resume.
+- **Frustrations**: Too many irrelevant postings; hard to tailor cover letters.
+- **Traits**: Tech‑savvy, uses mobile, values speed and clarity.
+
+### 2. Maya – Mid‑Career Professional
+- **Goals**: Switch industries; find remote/flexible roles; negotiate better compensation.
+- **Frustrations**: Time‑consuming applications; lack of feedback; difficulty showcasing transferable skills.
+- **Traits**: Experienced, values privacy, prefers detailed job info.
+
+### 3. Raj – Senior Executive
+- **Goals**: Board or C‑suite opportunities; confidential search.
+- **Frustrations**: Public job boards expose search; generic recruiters.
+- **Traits**: High‑value, expects discretion and high‑touch service.
+
+### 4. Sam – Career Coach
+- **Goals**: Track clients’ progress; provide data‑driven advice.
+- **Frustrations**: Manual aggregation of application data; limited insights.
+- **Traits**: Analytical, values reporting and export capabilities.
+
+## Functional Requirements
+
+### 1. User Management
+            - **1.1** Users can sign up with email/password or OAuth (Google, GitHub, LinkedIn) via Supabase Auth.
+- **1.2** Email verification required before login.
+- **1.3** Password reset via email token.
+- **1.4** Profile page: name, headline, location, bio, links (LinkedIn, GitHub, portfolio).
+- **1.5** Role‑based access: standard user, admin.
+
+### 2. Resume Handling
+- **2.1** Upload PDF/DOCX; extract text via OCR/NLP.
+- **2.2** Parse into sections: contact, summary, experience, education, skills, certifications.
+- **2.3** Extract skills and normalize to a taxonomy (e.g., ESCO, O*NET).
+- **2.4** Allow manual editing of parsed fields.
+            - **2.5** Store original file in Supabase Storage.
+- **2.6** Generate skill vector embedding for matching.
+
+### 3. Job Ingestion (via Apify)
+- **3.1** Scheduled scraping jobs for each source (LinkedIn, Wellfound, Greenhouse, Lever, Indeed, company career pages).
+- **3.2** Deduplicate jobs by URL/hash and fuzzy title/company match.
+- **3.3** Normalize fields: title, company, location, description, salary, employment type, remote flag, application URL, posted date.
+            - **3.4** Store raw JSON and cleaned record in Supabase PostgreSQL.
+- **3.5** Flag jobs requiring review (e.g., missing salary).
+
+### 4. Job Search & Discovery
+- **4.1** Free‑text search over title, description, company, skills.
+- **4.2** Faceted filters: location (city, remote, hybrid), salary range, experience level, employment type, date posted.
+- **4.3** Sort by relevance (match score), date, salary.
+- **4.4** Save searches and enable email alerts for new matches.
+
+### 5. Job Matching
+            - **5.1** Compute cosine similarity between resume embedding and job description embedding using pgvector (provided by Supabase).
+- **5.2** Combine with keyword match boost and recency decay.
+- **5.3** Allow users to weigh factors (skills, location, title) via UI sliders.
+- **5.4** Present match score (0‑100%) and breakdown.
+- **5.5** Exclude already‑saved/applied jobs from recommendations unless opted‑in.
+
+### 6. Job Interaction
+- **6.1** Save job to “Saved" list with optional note.
+- **6.2** Track application status: Saved → Applied → OA → Interview → Offer → Rejected (user‑editable).
+- **6.3** One‑click apply via external URL; record click timestamp.
+- **6.4** Add custom application stages if needed.
+
+### 7. Application Materials Generation
+- **7.1** Cover Letter: Input job description & resume; generate tailored letter using LLM.
+- **7.2** Cold Email/LinkedIn Message: Generate short outreach note to recruiter/hiring manager.
+- **7.3** Allow editing, regenerating, and saving versions.
+- **7.4** Store generated documents linked to job and user.
+
+### 8. Notification System
+- **8.1** Email alerts: new matching jobs, application status changes (if integrated with ATS webhook), weekly digest.
+- **8.2** In‑app bell indicator with dropdown.
+- **8.3** Configurable preferences (frequency, channels).
+
+### 9. Administration & Operations
+- **9.1** Admin dashboard: user management, scraping job monitors, system health, usage analytics.
+- **9.2** Ability to trigger manual scraping runs.
+- **9.3** View logs, error rates, performance metrics.
+- **9.4** Data export (CSV/JSON) for compliance requests.
+
+## Non‑Functional Requirements
+
+### Performance
+- Home page load < 2 seconds on 3G.
+- API 95th‑percentile latency < 500 ms.
+            - Vector search latency < 200 ms for 1M vectors (Supabase pgvector).
+
+### Scalability
+- Horizontal pod autoscaling based on CPU/QPS.
+- Database read replicas for search queries (Supabase provides read replicas).
+- Redis clustering for session cache and rate limiting.
+
+### Availability & Reliability
+- Multi‑AZ deployment (if using cloud).
+- Automated backups with point‑in‑time recovery.
+- Circuit breaker pattern for external APIs (Apify, OpenAI).
+
+### Security
+- HTTPS everywhere, HSTS.
+            - JWT access tokens (short‑lived) + refresh token rotation (issued by Supabase Auth).
+- OAuth 2.0 PKCE for social logins (supported by Supabase Auth).
+- Role‑based access control (RBAC).
+- AES‑256 encryption at rest for PII and files.
+- Regular dependency scanning (OWASP Dependency‑Check).
+- Pen‑test and vulnerability scanning before release.
+
+### Maintainability
+- Modular monolith → microservices migration path.
+- Clear domain‑driven boundaries (auth, job, resume, ai, notifications).
+- Comprehensive logging (structured JSON).
+- Semantic versioning and changelog.
+- Contributing guide and code‑ownership (CODEOWNERS).
+
+### Observability
+- Structured logging (JSON) to stderr, shipped to ELK or Loki.
+- Metrics (Prometheus) for request latency, error rates, job queue depth.
+- Distributed tracing (OpenTelemetry) across services.
+- Health check endpoints (/ready, /live) for each service.
+
+### Deployability
+- Docker images built via CI.
+- Helm charts (if K8s) or Docker Compose for local dev.
+- GitHub Actions workflow for lint, test, build, push, deploy.
+- Blue‑green or canary deployment feature flags.
+            - Database migration scripts (Alembic/SQLFlyway or Supabase Migration) version‑controlled.
+
+## User Stories & Acceptance Criteria
+
+*(Only a representative sample; full backlog lives in project tracker.)*
+
+### Epic: User Onboarding
+**Story**: As a visitor, I want to create an account so that I can save jobs and receive recommendations.
+- **Acceptance**:
+  - Sign‑up form validates email, password strength.
+  - Upon submit, verification email sent with token.
+  - Clicking link activates account and redirects to onboarding.
+  - Error handling for existing email, invalid token.
+
+### Epic: Resume Upload
+**Story**: As a user, I want to upload my resume so my skills can be extracted.
+- **Acceptance**:
+  - Accept .pdf, .docx up to 5 MB.
+  - Show parsing progress bar.
+  - Display extracted fields for review; allow edit.
+  - Store original file securely; show preview.
+  - Failure handling shows friendly message.
+
+### Epic: Job Search
+**Story**: As a user, I want to search jobs by keyword and location so I can find relevant openings.
+- **Acceptance**:
+  - Search box accepts free text; location dropdown with geo‑search.
+  - Results display title, company, location, match‑score badge, posted date.
+  - Clicking result opens job detail view.
+  - Empty state shows helpful suggestions.
+
+### Epic: Job Matching
+**Story**: As a user, I want to see a match percentage for each job so I can prioritize applications.
+- **Acceptance**:
+  - Score calculated as weighted cosine similarity + keyword boost.
+  - Tooltip shows breakdown (skills 40%, title 30%, location 20%, recency 10%).
+  - Users can adjust weights in settings; scores update in real time.
+
+### Epic: Application Tracking
+**Story**: As a user, I want to move a job through application stages so I know where I stand.
+- **Acceptance**:
+  - Kanban‑style board with columns: Saved, Applied, OA, Interview, Offer, Rejected.
+  - Drag‑and‑drop updates status; timestamp recorded.
+  - Ability to add notes per stage.
+  - Filter board by status, date added.
+
+### Epic: Cover Letter Generator
+**Story**: As a user, I want to generate a cover letter tailored to a job so I can save time.
+- **Acceptance**:
+  - Button “Generate Cover letter” LLM prompt includes resume summary and job description.
+  - Output displayed; user can regenerate or edit.
+  - Saved version linked to job; download as PDF/DOCX.
+  - Uses OpenAI GPT‑4‑turbo with temperature 0.7.
+
+### Epic: Notifications
+**Story**: As a user, I want to receive email alerts for new high‑match jobs so I don’t miss opportunities.
+- **Acceptance**:
+  - User sets threshold (e.g., ≥80% match) and frequency (instant/daily/weekly).
+  - Email includes job title, company, match score, apply link.
+  - Unsubscribe link included.
+  - Respects user’s timezone for timing.
+
+### Epic: Admin Monitoring
+**Story**: As an admin, I want to view scraping job health so I can intervene if a source fails.
+- **Acceptance**:
+  - Dashboard shows last run status, success/failure count, latency.
+  - Alert if consecutive failures > threshold.
+  - Ability to trigger manual re‑run for a source.
+  - Logs downloadable.
+
+## Out of Scope
+- Mobile native applications (iOS/Android).
+- Employer portal for posting jobs.
+- Direct integration with employer ATS for one‑click apply.
+- Salary negotiation chatbot.
+- Visa/work‑authorization advisory service.
+
+## Open Questions
+- Should we support importing LinkedIn profile directly via OAuth?
+- What is the desired SLA for job data freshness (e.g., ≤ 6 h)?
+- Which vector similarity metric (cosine vs dot product) yields best relevance in early tests?
+- Should we allow users to upload multiple resumes (e.g., tech vs managerial)?
+- What third‑party email provider (SendGrid, SES, Mailgun) will we use for transactional mail?
+
+---
+*Document version: 1.0*
+*Last updated: 2026-07-14*
