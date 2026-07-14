@@ -1,5 +1,5 @@
 from pydantic import BaseSettings, PostgresDsn, AnyHttpUrl
-from typing import Optional, List
+from typing import Optional
 import secrets
 
 class Settings(BaseSettings):
@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     # Security
     SECRET_KEY: str = secrets.token_urlsafe(32)
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
-    ALGORITHM: str = "HS256"
+    ALGORITHM: str = "RS256"
     # Supabase JWT verification
     SUPABASE_JWKS_URL: Optional[AnyHttpUrl] = None
     JWT_AUDIENCE: str = "authenticated"
@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     # Supabase
     SUPABASE_URL: Optional[AnyHttpUrl] = None
     SUPABASE_SERVICE_ROLE_KEY: Optional[str] = None
+    SUPABASE_JWKS_URL: Optional[AnyHttpUrl] = None
 
     # Apify
     APIFY_API_TOKEN: Optional[str] = None
