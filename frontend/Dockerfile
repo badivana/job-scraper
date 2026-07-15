@@ -16,4 +16,4 @@ COPY --from=builder /app/public ./public
 
 ENV NODE_ENV=production
 EXPOSE 3000
-CMD ["node", "node_modules/next/dist/server/start.js"]
+CMD ["npm", "start"]

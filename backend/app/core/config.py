@@ -1,4 +1,5 @@
-from pydantic import BaseSettings, PostgresDsn, AnyHttpUrl
+from pydantic_settings import BaseSettings
+from pydantic import PostgresDsn, AnyHttpUrl
 from typing import Optional
 import secrets
 

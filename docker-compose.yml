@@ -1,4 +1,4 @@
-version: '3.8'
+
 
 services:
   db:
@@ -42,7 +42,7 @@ services:
       - DEBUG=true
       - LOG_LEVEL=debug
       - ENVIRONMENT=development
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+      - DATABASE_URL=postgresql://postgres:prajwalBT%406@db.bpfhrqqpccevasvjhsbv.supabase.co:5432/postgres
       - REDIS_URL=redis://redis:6379/0
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
@@ -85,9 +85,7 @@ services:
       - NEXT_PUBLIC_API_URL=http://localhost:8000
       - NEXT_PUBLIC_SUPABASE_URL=${SUPABASE_URL}
       - NEXT_PUBLIC_ENABLE_REALTIME=${NEXT_PUBLIC_ENABLE_REALTIME:-false}
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
+    
     ports:
       - "3000:3000"
     healthcheck:
@@ -105,9 +103,9 @@ services:
       - "1025:1025" # SMTP server
       - "8025:8025" # Web UI
 
-worker:
+  worker:
     build:
-      context: ./worker
+      context: ./backend
       dockerfile: Dockerfile
     container_name: jobfinder_worker
     environment:
@@ -139,6 +137,7 @@ worker:
     volumes:
       - ./backend:/app
       - ./backend/alembic:/app/alembic
+    command: celery -A app.worker worker --loglevel=info
 
 
 volumes:
